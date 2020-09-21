@@ -1,0 +1,10 @@
+server.name: "kibana"
+server.port: 5601
+server.host: "192.168.91.139"
+logging.verbose: true
+elasticsearch.ssl.verificationMode: none
+elasticsearch.username: riak
+elasticsearch.password: riak
+elasticsearch.requestHeadersWhitelist: ["authorization", "sgtenant"]
+elasticsearch.hosts: ["http://192.168.91.139:9201"]
+i18n.locale: zh-CN

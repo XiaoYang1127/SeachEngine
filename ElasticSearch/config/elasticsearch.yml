@@ -1,0 +1,15 @@
+#
+# ---------------------------------- Cluster -----------------------------------
+#
+cluster.name: xiaoyang
+node.name: node-01
+node.master: true
+node.data: true
+path.data: /opt/elasticsearch/elasticsearch/data
+path.logs: /opt/elasticsearch/elasticsearch/logs
+bootstrap.memory_lock: true
+network.host: 192.168.91.139
+http.port: 9201
+transport.tcp.port: 9301
+# 显式指定那些可以成为master节点的名称或者IP地址
+cluster.initial_master_nodes: ["node-01"]

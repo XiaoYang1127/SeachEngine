@@ -1,0 +1,206 @@
+# ======================== Elasticsearch Configuration =========================
+#
+# ES重要配置，修改需谨慎！！！
+#
+# ---------------------------------- Cluster -----------------------------------
+#
+# 集群名字:
+#
+cluster.name: my-cluster
+#
+# ------------------------------------ Node ------------------------------------
+#
+# 节点名字:
+#
+node.name: node-01
+#
+# 为节点添加部落属性（一般无需修改使用默认路径即可）:
+#
+#node.attr.rack_id: r1
+#cluster.routing.allocation.awareness.attributes: rack_id
+#
+# 节点用途：
+#
+node.master: true
+node.data: true
+#
+# 当同一台机器部署多个节点的时候只能有一个节点设置node.master:true;
+# 并且若修改了http.port、transport.tcp.port一定要将各个节点的值设置不同，
+# 否则会出现占用的情况，正常如果不修改，默认会分配值；
+# 同一机器上复制节点的时候一定要注意不可具有相同的数据目录，也不能复制原节点的data目录。
+#
+# ----------------------------------- Paths ------------------------------------
+#
+# 数据存储路径（一般无需修改使用默认路径即可；多路径逗号分隔）:
+#
+#path.data: /path/to/data
+#
+# 日志存储路径（一般无需修改使用默认路径即可）:
+#
+#path.logs: /path/to/logs
+#
+# ----------------------------------- Memory -----------------------------------
+#
+# 启动后是否锁定内存:
+#
+bootstrap.memory_lock: false
+#
+# 需可确定系统中一半儿的内存是可以获得的并且当前用户拥有使用这只限定值的权限，
+# 确保 ES_MIN_MEM 和 ES_MAX_MEM 环境变量设置为相同的值, 以及机器有足够的内存
+# 分配给Elasticsearch 。
+# 注意:内存也不是越大越好,一般64位机器,最大分配内存别超过32G
+#
+#当内存达到一定比例的时候会触发内存回收（默认是JVM的70%）：
+#
+indices.breaker.total.limit: 70%
+#
+# 当内存不够的时候将会对查询结果数据缓存进行回收:
+#
+index.cache.field.type: soft
+#
+# 设置es最大缓存数据条数和缓存失效时间:
+#
+index.cache.field.max_size: 20000
+index.cache.field.expire: 10m
+#
+# 用于fielddata缓存的内存数量,主要用于当使用排序,faceting操作时,elasticsearch
+# 会将一些热点数据加载到内存中来提供给客户端访问:
+#
+indices.fielddata.cache.expire: 20m
+indices.fielddata.cache.size: 30%
+#
+# 执行数据过滤时的数据缓存(默认10%或填写具体值如512m):
+#
+indices.cache.filter.size: 20%
+indices.cache.filter.expire: 20m
+#
+# 当translog的大小达到此值时会进行一次flush操作.默认是512mb:
+#
+index.translog.flush_threshold_size: 1g
+#
+# 多少时间进行一次的写磁盘操作,默认是5s:
+#
+index.gateway.local.sync: 10s
+#
+# 在指定的时间间隔内如果没有进行flush操作,会进行一次强制flush操作.默认是30m:
+#
+index.translog.flush_threshold_period: 30m
+#
+# 多少时间间隔内会检查一次translog,来进行一次flush操作.es会随机的在这个值到
+# 这个值的2倍大小之间进行一次操作,默认是5s:
+#
+index.translog.interval: 3s
+#
+# ---------------------------------- Network -----------------------------------
+#
+# 设置节点绑定地址 (IPv4 or IPv6):
+#
+network.host: 127.0.0.1
+#
+# 设置HTTP访问端口:
+#
+http.port: 9200
+#
+# 使用http协议对外提供服务,默认为true,开启:
+#
+http.enabled: true
+#
+# 数据传输、节点连接端口：
+transport.tcp.port: 9300
+#
+# --------------------------------- Discovery ----------------------------------
+#
+# 关闭多播：
+#
+discovery.zen.ping.multicast.enabled: false
+#
+# 单播节点列表:
+#
+discovery.zen.ping.unicast.hosts: ["host1", "host2", "host3"]
+#
+# 抑制脑裂参数 (具备选举为主节点的节点数 / 2 + 1):
+#
+discovery.zen.minimum_master_nodes: 2
+#
+# master节点接受集群状态变更的延迟时间：
+#
+discovery.zen.commit_timeout: 90s
+#
+# 节点发现的时候ping的超时时间:
+#
+discovery.zen.ping_timeout: 120s
+#
+# 节点间通信时ping的超时时间:
+#
+client.transport.ping_timeout: 120s
+#
+# ping的时候等待域名解析的时间(默认5秒):
+#
+discovery.zen.ping.unicast.hosts.resolve_timeout: 10
+#
+# 以下配置可以减少当es节点短时间宕机或重启时shards重新分布带来的磁盘io读写浪费:
+# 注：节点间相互说明我还活着的参数配置：
+#
+discovery.zen.fd.ping_timeout: 180s
+discovery.zen.fd.ping_retries: 6
+discovery.zen.fd.ping_interval: 30s
+discovery.zen.ping_timeout: 120s
+
+# ---------------------------------- Recovery Throttling -----------------------------------
+# 下面这些配置允许在初始化恢复,副本分配,再平衡,或者添加和删除节点时控制节点间的分片分配,设置一个节点的并行恢复数.
+#
+# 初始化数据恢复时,并发恢复线程的个数,默认为4 :
+#
+cluster.routing.allocation.node_initial_primaries_recoveries: 8
+#
+# 添加删除节点或负载均衡时并发恢复线程的个数,默认为2 :
+#
+cluster.routing.allocation.node_concurrent_recoveries: 4
+#
+# 设置恢复时的吞吐量(默认为0无限制.如果机器还有其他业务在跑的话还是限制一下的好) :
+#
+indices.recovery.max_bytes_per_sec: 0
+#
+# 设置来限制从其它分片恢复数据时最大同时打开并发流的个数,默认为5 :
+#
+indices.recovery.concurrent_streams: 10
+#
+# 注意: 合理的设置以上参数能有效的提高集群节点的数据恢复以及初始化速度 :
+#
+# 初始化数据恢复时,并发恢复线程的个数,默认为4:
+#
+cluster.routing.allocation.node_initial_primaries_recoveries: 8
+#
+# ---------------------------------- Gateway -----------------------------------
+#
+# 集群重启，数据恢复设置:
+#
+# 多少个节点上线了开始恢复：
+#
+gateway.expected_nodes: 3
+#
+# 上面的参数没有达到时，多长时间开始恢复：
+#
+gateway.recover_after_time: 5m
+#
+#上面是时间参数超时了下面的参数生效：
+#
+gateway.recover_after_nodes: 2
+#
+# ---------------------------------- Various -----------------------------------
+#
+# 删除索引的时候必须指明具体的索引名字（抑制模糊删除）:
+#
+action.destructive_requires_name: true
+#
+#单节点上可以开启的ES存储实例的个数:
+#
+node.max_local_storage_nodes:1
+#
+# ---------------------------------- Header -----------------------------------
+#
+# 安装header插件时的必要参数:
+#
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+http.cors.allow-credentials: true
